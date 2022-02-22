@@ -22,21 +22,24 @@ void main() {
               tooltipBehavior: _tooltipBehavior,
               series: <ChartSeries>[
                 LineSeries<Data, double>(
+                  // List _charData of type Data which holdes variables of type double
                   dataSource: _chartData,
                   xValueMapper: (Data xaxis, _) => xaxis.yaxis,
                   yValueMapper: (Data xaxis, _) => xaxis.xaxis,
-                  name: sensorName,
+                  name: sensorName, // Change this variable for the sensor name
                   enableTooltip: true,
                 )
               ],
             ),
           ),
           Container(
+            //Toggle Sensors button
             margin: EdgeInsets.all(20.0),
             child:
                 ElevatedButton(onPressed: () {}, child: Text('Toggle Sensors')),
           ),
           Container(
+            // Toggle LED button
             margin: EdgeInsets.fromLTRB(0, 0, 0, 150.0),
             child: ElevatedButton(onPressed: () {}, child: Text('Toggle LED')),
           ),
@@ -46,6 +49,7 @@ void main() {
   ));
 }
 
+/// Generates list of data
 List<Data> getChartData() {
   final List<Data> chartData = [
     Data(1, 25),
@@ -57,16 +61,8 @@ List<Data> getChartData() {
   return chartData;
 }
 
+///Class to hold data to be shown on chart
 class Data {
   Data(this.yaxis, this.xaxis);
   double xaxis, yaxis;
 }
-
-
-// List<Data> getChartData(){
-//   var list = database['items'] as List;
-//   List<Item> itemsList = list.map((i) => Item.fromJSON(i)).toList();
-// }
-
-
-
