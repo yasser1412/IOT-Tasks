@@ -25,25 +25,23 @@ app.get("/api/readings", async (req, res) => {
       res.status(400).json({"error":err.message});
       return;
     }
-    res.status(200).json({
-        "message":"success",
-        "data":rows
-    })
+    res.status(200).json(
+          rows
+        )
   });
 });
 
-app.get("/api/user/:sensor", (req, res) => {
+app.get("/api/readings/:sensor", (req, res) => {
     const sql = "select * from readings where sensor = ?"
     const params = [req.params.sensor]
-    db.get(sql, params, (err, row) => {
+    db.all(sql, params, (err, rows) => {
         if (err) {
           res.status(400).json({"error":err.message});
           return;
         }
-        res.status(200).json({
-            "message":"success",
-            "data":row
-        })
+        res.status(200).json(
+          rows
+        )
       });
 });
 
@@ -74,10 +72,9 @@ app.post("/api/readings", async (req, res) => {
           res.status(400).json({"error": err.message})
           return;
       }
-      res.status(200).json({
-          "message": "success",
-          "data": data,
-      })
+      res.status(200).json(
+        data
+      )
   });
 });
 
