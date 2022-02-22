@@ -1,2 +1,6 @@
 Task0/Server/node_modules/
 Task0/Client/build/
+Task0/Client/.dart_tool
+Task0/Client/.packages
+Task0/Client/Generated.xcconfig
+Task0/Client/flutter_export_environment.sh
