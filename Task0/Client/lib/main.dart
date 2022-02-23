@@ -54,7 +54,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    futureAlbum = fetchAlbum("");
     futureAlbum = fetchAlbum("temp");
   }
 
@@ -119,7 +118,7 @@ class _MyAppState extends State<MyApp> {
                                       });
                                     } else {
                                       setState(() {
-                                        futureAlbum = fetchAlbum("lt");
+                                        futureAlbum = fetchAlbum("LT");
                                       });
                                     }
                                   },

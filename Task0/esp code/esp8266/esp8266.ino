@@ -1,5 +1,5 @@
 /****************************************
- * Include Libraries
+   Include Libraries
  ****************************************/
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
@@ -7,7 +7,7 @@
 #include <DallasTemperature.h>
 #include <ArduinoJson.h>
 /****************************************
- * Define Constants
+   Define Constants
  ****************************************/
 #define temperatureSensorPin D3
 #define lineTrackerPin D0
@@ -16,23 +16,21 @@
 float temperature = 0;
 int lineTrackerValue = 0;
 String wifiName = "Hassan";
-String wifiPassword= "hassan87890"; 
+String wifiPassword = "hassan87890";
 
 // Create instances of libraries of temperature sensor
 OneWire ourWire(temperatureSensorPin);
 DallasTemperature sensors(&ourWire);
 
-String jsonn ="";
+String jsonn = "";
 /****************************************
- * Main Functions
+   Main Functions
  ****************************************/
 void setup() {
-  
-  Serial.begin(9600); // Begin serial communication at baudrate 9600
-  Serial.println("1111");
-  
-  pinMode(lineTrackerPin, INPUT);
 
+  Serial.begin(9600); // Begin serial communication at baudrate 9600
+
+  pinMode(lineTrackerPin, INPUT);
 
   WiFi.begin(wifiName, wifiPassword);
   while (WiFi.status() != WL_CONNECTED) {
@@ -40,42 +38,29 @@ void setup() {
     Serial.print(".");
   }
   Serial.println("Connected!");
-  
-  sensors.begin();
-  }
 
-  
+  sensors.begin();
+}
+
+
 void loop() {
 
-//    Serial.println("Enter the wifi name");  
-//    while (Serial.available() == 0)   
-//    { //Wait for user input  }  
-//    wifiName = Serial.readString(); //Reading the Input string from Serial port.
-
-//    Serial.println("Enter the wifi password");  
-//    while (Serial.available() == 0)   
-//    { //Wait for user input  }  
-//    wifiPassword = Serial.readString(); //Reading the Input string from Serial port.
-
-
-    
-   // wait for WiFi connection
   if ((WiFi.status() == WL_CONNECTED)) {
-    
+
     Serial.println("Connecteddd");
     WiFiClient client;
     HTTPClient http;
 
-    Serial.print("[HTTP] begin...\n");
+    Serial.println("[HTTP] begin...\n");
     // configure traged server and url
     http.begin(client, "http://" serverIP "/api/readings/"); //HTTP
     http.addHeader("Content-Type", "application/json");
 
-    Serial.print("[HTTP] POST...\n");
+    Serial.println("[HTTP] POST...\n");
     // start connection and send HTTP header and body
 
-    
-    jsonn = toJSON(temperature);
+
+    jsonn = toJSON("temp", temperature);
 
     Serial.println("This is json \n" + jsonn);
     int httpCode = http.POST(jsonn);
@@ -101,9 +86,9 @@ void loop() {
 
 
 
-  
+
   // Send the command to get temperatures
-  sensors.requestTemperatures(); 
+  sensors.requestTemperatures();
 
   //print the temperature in Celsius
   Serial.print("Temperature: ");
@@ -117,46 +102,55 @@ void loop() {
 
   Serial.print(" ");
 
-  String json = toJSON(temperature);
-  int httpCode = postValues(json);
+  String tempName = "temp";
+  String LTName = "LT";
+  
+  String tempJson = toJSON(tempName, temperature);
+  
+  delay(1000);
+  
+  String LTJson = toJSON(LTName, lineTrackerValue);
+  
+  int httpCode = postValues(tempJson);
+  
+  delay(1000);
+  
+  int httpCodee = postValues(LTJson);
 
   if (httpCode == 201) {
-    Serial.print("POSTED: ");
-    Serial.println(json);
+    Serial.println("POSTED: ");
+    //Serial.println(json);
     delay(1000);
-    } else {
-    Serial.print("Fail. HTTP ");
+  } else {
+    Serial.println("Fail. HTTP ");
     Serial.println(httpCode);
     Serial.println(WiFi.status());
 
-    }
+  }
 
-  delay(1000);
-  
- }
+  delay(3000);
 
- String toJSON(float temperature) {
+}
 
-    String temp = String(temperature);
-    //String LT = String(lineTracker);
-    return String("{\"sensor\": ") + "\"temp\" "+ ", \"value\": " + temp + "}"; 
+String toJSON(String Name, float value) {
+
+  String sensorValue = String(value);
+    return String("{\"sensor\": ") + "\"" + Name + "\"" + ", \"value\": " + sensorValue + "}";
 }
 
 int postValues(String json) {
-WiFiClient ourClient;
-HTTPClient http; //Declare object of class HTTPClient
-//Serial.print("http://" serverIP "/api/readings/");
-http.begin(ourClient, "http://" serverIP "/api/readings/"); //Specify request destination
-//http.begin("0.0.0.0",3000,"/measures");
-http.addHeader("Content-Type", "application/json"); //Specify content-type header
-//http.addHeader("Accept", "application/json");
- Serial.print(json);
-int httpCode = http.POST(json); //Send the request
-String payload = http.getString(); //Get the response payload
-Serial.print(payload);
-return httpCode;
+  WiFiClient ourClient;
+  HTTPClient http; //Declare object of class HTTPClient
+  //Serial.print("http://" serverIP "/api/readings/");
+  http.begin(ourClient, "http://" serverIP "/api/readings/"); //Specify request destination
+  http.addHeader("Content-Type", "application/json"); //Specify content-type header
+  //Serial.print(json);
+  int httpCode = http.POST(json); //Send the request
+  String payload = http.getString(); //Get the response payload
+  Serial.println(payload);
+  return httpCode;
 
-// Serial.print("HTTP Response: "); //Print HTTP return code
-// Serial.print(httpCode);
-// Serial.println(payload); //Print request response payload
+  // Serial.print("HTTP Response: "); //Print HTTP return code
+  // Serial.print(httpCode);
+  // Serial.println(payload); //Print request response payload
 }
