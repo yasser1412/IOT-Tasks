@@ -52,19 +52,20 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    futureAlbum = fetchAlbum("alo");
+    futureAlbum = fetchAlbum("");
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Fetch Data Example',
+      debugShowCheckedModeBanner: false,
+      title: 'TASK0',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Fetch Data Example'),
+          title: const Text('TASK0'),
         ),
         body: Center(
           child: FutureBuilder<List<Album>>(
