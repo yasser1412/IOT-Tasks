@@ -1,72 +1,140 @@
+import 'dart:convert';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:http/http.dart' as http;
+import 'album.dart';
 
-void main() {
-  List<Data> _chartData = getChartData();
-  TooltipBehavior _tooltipBehavior = TooltipBehavior(enable: true);
-  String sensorName = "Sensor Name";
+String sensorName = "";
 
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: Scaffold(
-      appBar: AppBar(
-        title: Text('Sensors readings'),
-      ),
-      body: Center(
-        child:
-            Column(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-          Container(
-            child: SfCartesianChart(
-              title: ChartTitle(text: "Sensor Name"),
-              legend: Legend(isVisible: true),
-              tooltipBehavior: _tooltipBehavior,
-              series: <ChartSeries>[
-                LineSeries<Data, double>(
-                  dataSource: _chartData,
-                  xValueMapper: (Data xaxis, _) => xaxis.yaxis,
-                  yValueMapper: (Data xaxis, _) => xaxis.xaxis,
-                  name: sensorName,
-                  enableTooltip: true,
-                )
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.all(20.0),
-            child:
-                ElevatedButton(onPressed: () {}, child: Text('Toggle Sensors')),
-          ),
-          Container(
-            margin: EdgeInsets.fromLTRB(0, 0, 0, 150.0),
-            child: ElevatedButton(onPressed: () {}, child: Text('Toggle LED')),
-          ),
-        ]),
-      ),
-    ),
-  ));
+Future<List<Album>> fetchAlbum(String SensorName) async {
+  String url = 'http://localhost:8000/api/readings/' + SensorName;
+  final response = await http.get(Uri.parse(url));
+
+  sensorName = SensorName;
+
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    var responseData = json.decode(response.body);
+    List<Album> reads = [];
+    for (var singleRead in responseData) {
+      Album read = Album(
+          sensor: singleRead["sensor"],
+          value: singleRead["value"],
+          timestamp: singleRead["timestamp"]);
+      //Adding reads to the list.
+      reads.add(read);
+    }
+    return reads;
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    throw Exception('Failed to load album');
+  }
 }
 
-List<Data> getChartData() {
-  final List<Data> chartData = [
-    Data(1, 25),
-    Data(2, 12),
-    Data(3, 24),
-    Data(4, 18),
-    Data(5, 30),
-  ];
-  return chartData;
+void main() => runApp(const MyApp());
+
+TooltipBehavior _tooltipBehavior = TooltipBehavior(enable: true);
+
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late Future<List<Album>> futureAlbum;
+
+  @override
+  void initState() {
+    super.initState();
+    futureAlbum = fetchAlbum("alo");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Fetch Data Example',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Fetch Data Example'),
+        ),
+        body: Center(
+          child: FutureBuilder<List<Album>>(
+            future: futureAlbum,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                List<Data> chartData = [];
+                for (var i = 0; i < snapshot.data!.length; i++) {
+                  chartData.add(Data(
+                      snapshot.data![i].value, snapshot.data![i].timestamp));
+                }
+                return MaterialApp(
+                  debugShowCheckedModeBanner: false,
+                  home: Scaffold(
+                    body: Center(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Container(
+                              child: SfCartesianChart(
+                                title: ChartTitle(text: sensorName),
+                                legend: Legend(isVisible: true),
+                                tooltipBehavior: _tooltipBehavior,
+                                series: <ChartSeries>[
+                                  LineSeries<Data, double>(
+                                    // List _charData of type Data which holdes variables of type double
+                                    dataSource: chartData,
+                                    xValueMapper: (Data xaxis, _) =>
+                                        xaxis.xaxis,
+                                    yValueMapper: (Data xaxis, _) =>
+                                        xaxis.yaxis,
+                                    name:
+                                        sensorName, // Change this variable for the sensor name
+                                    enableTooltip: true,
+                                  )
+                                ],
+                              ),
+                            ),
+                            Container(
+                              //Toggle Sensors button
+                              margin: EdgeInsets.all(20.0),
+                              child: ElevatedButton(
+                                  onPressed: () {},
+                                  child: Text('Toggle Sensors')),
+                            ),
+                            Container(
+                              // Toggle LED button
+                              margin: EdgeInsets.fromLTRB(0, 0, 0, 150.0),
+                              child: ElevatedButton(
+                                  onPressed: () {}, child: Text('Toggle LED')),
+                            ),
+                          ]),
+                    ),
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Text('${snapshot.error}');
+              }
+
+              // By default, show a loading spinner.
+              return const CircularProgressIndicator();
+            },
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class Data {
   Data(this.yaxis, this.xaxis);
   double xaxis, yaxis;
 }
-
-
-// List<Data> getChartData(){
-//   var list = database['items'] as List;
-//   List<Item> itemsList = list.map((i) => Item.fromJSON(i)).toList();
-// }
-
-
-

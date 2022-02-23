@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const db = require("./database.js")
-
+const cors = require('cors')
 // constants
 const PORT = process.env.PORT || 8000;
 
@@ -16,7 +16,7 @@ function set_date() {
 setInterval(set_date, 900000);
 
 // routes
-app.get("/api/readings", async (req, res) => {
+app.get("/api/readings", cors() , async (req, res) => {
 
   const sql = "select * from readings"
   const params = []
@@ -31,7 +31,7 @@ app.get("/api/readings", async (req, res) => {
   });
 });
 
-app.get("/api/readings/:sensor", (req, res) => {
+app.get("/api/readings/:sensor", cors() , (req, res) => {
     const sql = "select * from readings where sensor = ?"
     const params = [req.params.sensor]
     db.all(sql, params, (err, rows) => {
@@ -46,7 +46,7 @@ app.get("/api/readings/:sensor", (req, res) => {
 });
 
 
-app.post("/api/readings", async (req, res) => {
+app.post("/api/readings", cors() , async (req, res) => {
 
   var errors=[]
   if (!req.body.sensor){
@@ -63,7 +63,7 @@ app.post("/api/readings", async (req, res) => {
     const data = {
       sensor: req.body.sensor,
       value: req.body.value,
-      timestamp: current_time.getTime() - current_date.getTime()
+      timestamp: (current_time.getTime() - current_date.getTime())/1000
   }
   var sql ='INSERT INTO readings (sensor, value, timestamp) VALUES (?,?,?)'
   var params =[data.sensor, data.value, data.timestamp]
