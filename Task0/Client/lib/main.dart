@@ -7,6 +7,8 @@ import 'package:http/http.dart' as http;
 import 'album.dart';
 
 String sensorName = "";
+int toggleCounter = 0;
+List<Data> chartData = [];
 
 Future<List<Album>> fetchAlbum(String SensorName) async {
   String url = 'http://localhost:8000/api/readings/' + SensorName;
@@ -52,7 +54,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    futureAlbum = fetchAlbum("alo");
+    futureAlbum = fetchAlbum("temp");
   }
 
   @override
@@ -71,7 +73,7 @@ class _MyAppState extends State<MyApp> {
             future: futureAlbum,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                List<Data> chartData = [];
+                chartData = [];
                 for (var i = 0; i < snapshot.data!.length; i++) {
                   chartData.add(Data(
                       snapshot.data![i].value, snapshot.data![i].timestamp));
@@ -107,7 +109,18 @@ class _MyAppState extends State<MyApp> {
                               //Toggle Sensors button
                               margin: EdgeInsets.all(20.0),
                               child: ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    toggleCounter++;
+                                    if (toggleCounter % 2 == 0) {
+                                      setState(() {
+                                        futureAlbum = fetchAlbum("temp");
+                                      });
+                                    } else {
+                                      setState(() {
+                                        futureAlbum = fetchAlbum("lt");
+                                      });
+                                    }
+                                  },
                                   child: Text('Toggle Sensors')),
                             ),
                             Container(
