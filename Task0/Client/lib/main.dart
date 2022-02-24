@@ -138,6 +138,7 @@ class _MyAppState extends State<MyApp> {
                                         'http://192.168.167.223:8000/api/toggle/' +
                                             toggle[
                                                 (toggleCounter % 2).toInt()]));
+                                    print("toggled");
                                   },
                                   child: Text('Toggle LED')),
                             ),

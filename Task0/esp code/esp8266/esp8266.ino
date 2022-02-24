@@ -115,6 +115,10 @@ void loop() {
   int httpCode = postValues(tempJson);
   
   delay(1000);
+
+  String toggle = getToggle();
+
+  Serial.print(toggle);
   
   int httpCodee = postValues(LTJson);
 
@@ -154,4 +158,14 @@ int postValues(String json) {
   // Serial.print("HTTP Response: "); //Print HTTP return code
   // Serial.print(httpCode);
   // Serial.println(payload); //Print request response payload
+}
+
+String getToggle(){
+  WiFiClient ourClient;
+  HTTPClient http; //Declare object of class HTTPClient
+  //Serial.print("http://" serverIP "/api/readings/");
+  http.begin(ourClient, "http://" serverIP "/api/toggle/");
+  String payload = http.get();
+  return payload;
+}
 }
