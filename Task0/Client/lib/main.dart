@@ -7,8 +7,9 @@ import 'package:http/http.dart' as http;
 import 'album.dart';
 
 String sensorName = "";
-int toggleCounter = 0;
+double toggleCounter = 0;
 List<Data> chartData = [];
+List<String> toggle = ["True", "False"];
 
 Future<List<Album>> fetchAlbum(String SensorName) async {
   String url = 'http://192.168.167.223:8000/api/readings/' + SensorName;
@@ -24,8 +25,8 @@ Future<List<Album>> fetchAlbum(String SensorName) async {
     for (var singleRead in responseData) {
       Album read = Album(
           sensor: singleRead["sensor"],
-          value: singleRead["value"],
-          timestamp: singleRead["timestamp"]);
+          value: singleRead["value"].toDouble(),
+          timestamp: singleRead["timestamp"].toDouble());
       //Adding reads to the list.
       reads.add(read);
     }
@@ -132,7 +133,13 @@ class _MyAppState extends State<MyApp> {
                               // Toggle LED button
                               margin: EdgeInsets.fromLTRB(0, 0, 0, 150.0),
                               child: ElevatedButton(
-                                  onPressed: () {}, child: Text('Toggle LED')),
+                                  onPressed: () {
+                                    http.post(Uri.parse(
+                                        'http://192.168.167.223:8000/api/toggle/' +
+                                            toggle[
+                                                (toggleCounter % 2).toInt()]));
+                                  },
+                                  child: Text('Toggle LED')),
                             ),
                           ]),
                     ),

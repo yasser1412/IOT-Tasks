@@ -10,6 +10,7 @@ app.use(express.json());
 
 // set dates
 let current_date = new Date()
+let toggleFlag = false;
 
 function set_date() {
     current_date = new Date();
@@ -77,6 +78,29 @@ app.post("/api/readings", cors(), async(req, res) => {
             data
         )
     });
+});
+
+app.post("/api/toggle/:toggle", cors(), async(req, res) => {
+    if (req.params.toggle == "True"){
+        toggleFlag = true;
+    }
+    else if (req.params.toggle == "False"){
+        toggleFlag = false;
+    }
+    else {res.status(400).json(
+        "NOk"
+    )}
+    res.status(200).json(
+        "Ok"
+    )
+});
+app.get("/api/toggle", cors(), async(req, res) => {
+    if(toggleFlag){
+        res.status(200).json("True")
+    }
+    else{
+        res.status(200).json("False")
+    }
 });
 
 app.listen(PORT, () => console.log("Listening on port", PORT));
