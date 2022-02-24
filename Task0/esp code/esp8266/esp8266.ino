@@ -6,6 +6,7 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <ArduinoJson.h>
+#include <WiFiManager.h>
 /****************************************
    Define Constants
  ****************************************/
@@ -15,8 +16,9 @@
 
 float temperature = 0;
 int lineTrackerValue = 0;
-String wifiName = "POCO F3";
-String wifiPassword = "Hassan112233@";
+//String wifiName = "POCO F3";
+//String wifiPassword = "Hassan112233@";
+WiFiManager wm;
 
 // Create instances of libraries of temperature sensor
 OneWire ourWire(temperatureSensorPin);
@@ -28,11 +30,25 @@ String jsonn = "";
  ****************************************/
 void setup() {
 
+  WiFi.mode(WIFI_STA);
+  
   Serial.begin(9600); // Begin serial communication at baudrate 9600
 
+  bool res;
+  res = wm.autoConnect("AutoConnectAP","password");
+
+  if(!res) {
+        Serial.println("Failed to connect");
+        // ESP.restart();
+    } 
+    else {
+        //if you get here you have connected to the WiFi    
+        Serial.println("connected...yeey :)");
+    }
+  
   pinMode(lineTrackerPin, INPUT);
 
-  WiFi.begin(wifiName, wifiPassword);
+//  WiFi.begin(wifiName, wifiPassword);
   
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -46,7 +62,7 @@ void setup() {
 
 void loop() {
 
-  if ((WiFi.status() == WL_CONNECTED)) {
+  if (wm.getWLStatusString() == "WL_CONNECTED") {
 
     Serial.println("Connecteddd");
     WiFiClient client;
