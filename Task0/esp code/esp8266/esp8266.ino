@@ -11,12 +11,12 @@
  ****************************************/
 #define temperatureSensorPin D3
 #define lineTrackerPin D0
-#define serverIP "192.168.1.3:8000"
+#define serverIP "192.168.167.223:8000"
 
 float temperature = 0;
 int lineTrackerValue = 0;
-String wifiName = "Hassan";
-String wifiPassword = "hassan87890";
+String wifiName = "POCO F3";
+String wifiPassword = "Hassan112233@";
 
 // Create instances of libraries of temperature sensor
 OneWire ourWire(temperatureSensorPin);
@@ -33,6 +33,7 @@ void setup() {
   pinMode(lineTrackerPin, INPUT);
 
   WiFi.begin(wifiName, wifiPassword);
+  
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");

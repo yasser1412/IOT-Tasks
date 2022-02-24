@@ -11,7 +11,7 @@ int toggleCounter = 0;
 List<Data> chartData = [];
 
 Future<List<Album>> fetchAlbum(String SensorName) async {
-  String url = 'http://localhost:8000/api/readings/' + SensorName;
+  String url = 'http://192.168.167.223:8000/api/readings/' + SensorName;
   final response = await http.get(Uri.parse(url));
 
   sensorName = SensorName;
@@ -114,11 +114,15 @@ class _MyAppState extends State<MyApp> {
                                     toggleCounter++;
                                     if (toggleCounter % 2 == 0) {
                                       setState(() {
-                                        futureAlbum = fetchAlbum("temp");
+                                        new Timer(new Duration(seconds: 1), () {
+                                          futureAlbum = fetchAlbum("temp");
+                                        });
                                       });
                                     } else {
                                       setState(() {
-                                        futureAlbum = fetchAlbum("LT");
+                                        new Timer(new Duration(seconds: 1), () {
+                                          futureAlbum = fetchAlbum("LT");
+                                        });
                                       });
                                     }
                                   },
