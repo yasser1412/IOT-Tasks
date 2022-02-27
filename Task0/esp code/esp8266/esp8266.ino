@@ -12,6 +12,7 @@
  ****************************************/
 #define temperatureSensorPin D3
 #define lineTrackerPin D0
+#define LED D1
 #define serverIP "192.168.167.223:8000"
 
 float temperature = 0;
@@ -31,8 +32,12 @@ String jsonn = "";
 void setup() {
 
   WiFi.mode(WIFI_STA);
+
+  
   
   Serial.begin(9600); // Begin serial communication at baudrate 9600
+
+  pinMode(LED, OUTPUT);
 
   bool res;
   res = wm.autoConnect("AutoConnectAP","password");
@@ -76,6 +81,7 @@ void loop() {
     Serial.println("[HTTP] POST...\n");
     // start connection and send HTTP header and body
 
+    
 
     jsonn = toJSON("temp", temperature);
 
@@ -134,7 +140,13 @@ void loop() {
 
   String toggle = getToggle();
 
-  Serial.print(toggle);
+  delay(1000);
+
+  if(toggle == "True"){digitalWrite(LED, LOW);}
+  else{digitalWrite(LED, HIGH);}
+  
+
+  Serial.println(toggle);
   
   int httpCodee = postValues(LTJson);
 
@@ -176,12 +188,46 @@ int postValues(String json) {
   // Serial.println(payload); //Print request response payload
 }
 
-String getToggle(){
+String getToggle() {
   WiFiClient ourClient;
   HTTPClient http; //Declare object of class HTTPClient
   //Serial.print("http://" serverIP "/api/readings/");
-  http.begin(ourClient, "http://" serverIP "/api/toggle/");
-  String payload = http.get();
+  http.begin(ourClient, "http://" serverIP "/api/toggle/"); //Specify request destination
+  http.addHeader("Content-Type", "application/json"); //Specify content-type header
+  //Serial.print(json);
+  int httpCode = http.GET(); //Send the request
+  String payload = http.getString(); //Get the response payload
+  Serial.println(payload);
   return payload;
+
+  // Serial.print("HTTP Response: "); //Print HTTP return code
+  // Serial.print(httpCode);
+  // Serial.println(payload); //Print request response payload
 }
+
+void connect_to_network(){
+  WiFi.disconnect();
+  WiFi.scanNetworks();
+  Serial.print("Scan start ... ");
+  int n = WiFi.scanNetworks();
+  if ( n > 0 ) 
+     {
+        Serial.print(n);
+        Serial.println(" network(s) found");
+        for (int i = 0; i < n; i++)
+           {
+             Serial.println(WiFi.SSID(i));
+           }
+        Serial.println();
+      }
+
+  networkname = strtok(getname(0), " ");
+password = strtok(getname(1), " ");
+  
+  WiFi.begin(networkname,password);  //takes the ssid and password to connect
+  delay(1000);
+  Serial.print("Connected, IP address: ");
+  Serial.println(network_name);
+  Serial.println(password);
+  Serial.println(WiFi.localIP());
 }

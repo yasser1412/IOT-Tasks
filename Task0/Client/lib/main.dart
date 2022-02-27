@@ -134,6 +134,7 @@ class _MyAppState extends State<MyApp> {
                               margin: EdgeInsets.fromLTRB(0, 0, 0, 150.0),
                               child: ElevatedButton(
                                   onPressed: () {
+                                    toggleCounter++;
                                     http.post(Uri.parse(
                                         'http://192.168.167.223:8000/api/toggle/' +
                                             toggle[
