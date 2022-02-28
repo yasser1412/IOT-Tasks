@@ -17,16 +17,16 @@ X_train, X_test, y_train, y_test = train_test_split(data,labels,test_size=0.2,ra
 clf = KNeighborsClassifier() 
 
 ## SVC Model
-# neigh = SVC(kernel = 'rbf')
+# clf = SVC(kernel = 'rbf')
 
 ## Decision Tree Model
-# neigh = DecisionTreeClassifier()
+# clf = DecisionTreeClassifier()
 
 ## Training the model
 clf.fit(X_train, y_train)
 
 ## Test .. it should print [2]
-# predicted_labels = neigh.predict([[30,23,10,10,21,19]])
+# predicted_labels = clf.predict([[30,23,10,10,21,19]])
 # print(predicted_labels)
 
 # Printing accuracy
