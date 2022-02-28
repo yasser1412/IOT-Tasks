@@ -1,40 +1,30 @@
-from asyncore import write
-import json
-import os
-from flask import Flask, jsonify, request
+from flask import Flask, request
 from flask_cors import CORS
-import pandas as pd
-import openpyxl
+from joblib import load
+
+clf = load('model.joblib') 
 
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/saveReadings', methods=['GET'])
-def addData():
-    print(50)
-    request_data = request.get_json()
-    data = [] 
-    data.append(request_data)
-    print(data)
-    df_data = pd.DataFrame(data)
-    path = os.getcwd()
-    filename = 'data.xlsx'
-    sheet_name = "lab"
-    if (os.path.exists(filename)) :
-        wb = openpyxl.load_workbook(filename)
-        if(not (sheet_name in wb.sheetnames)):
-            wb.create_sheet(sheet_name)
-        ws = wb.active
-        for cell_data in data:
-            row=ws.max_row+1
-            ws.cell(column=1, row=row, value=cell_data['SSID'])
-            ws.cell(column=2, row=row, value=cell_data['Strength'])
-            wb.save(filename)
+global predicted
+
+@app.route('/', methods=['GET'])
+def Home():
+    return "<p> Hello :) !!</p>"
+
+
+@app.route('/Predict', methods=['GET', 'POST'])
+def Predict():
+    if request.method == 'POST':
+        requested_data = request.get_json()
+        data = []
+        data.append(requested_data)
+        predicted = clf.predict(data)
+        return str(predicted.tolist()[0]) , 200
     else:
-        df_data.to_excel(filename, index=False, sheet_name=sheet_name)
-
-    return jsonify(data)
-
+        return str(predicted.tolist()[0]) , 200
+    
 
 if __name__ == "main":
-    app.run(host="localhost", port=8433, debug=True)
+    app.run(host="localhost", debug=True)
