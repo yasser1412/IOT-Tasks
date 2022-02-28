@@ -9,7 +9,7 @@ import openpyxl
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/saveReadings', methods=['POST'])
+@app.route('/saveReadings', methods=['GET'])
 def addData():
     print(50)
     request_data = request.get_json()
