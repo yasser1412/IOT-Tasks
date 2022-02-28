@@ -7,8 +7,6 @@ clf = load('model.joblib')
 app = Flask(__name__)
 CORS(app)
 
-global predicted
-
 @app.route('/', methods=['GET'])
 def Home():
     return "<p> Hello :) !!</p>"
@@ -16,6 +14,7 @@ def Home():
 
 @app.route('/Predict', methods=['GET', 'POST'])
 def Predict():
+    global predicted
     if request.method == 'POST':
         requested_data = request.get_json()
         data = []
