@@ -3,10 +3,13 @@
 #include <ArduinoJson.h>
 #include <WiFiManager.h>
 
-#define serverIP "192.168.150.223:5000"
+#define serverIP "192.168.150.126:5000"
 
 
-String saved_networks[] = {"STUDBME1", "STUDBME2", "POCO F3", "Ammar's samsung", "CMP_LAB4", "CMP_LAB2"};
+String username = "POCO F3";
+String password = "Hassan112233@";
+
+String saved_networks[] = {"STUDBME1", "STUDBME2", "POCO F3", "POCO X3 NFC", "CMP_LAB4", "CMP_LAB2"};
 String scanned_ssids[6];
 int rssi_values[6];
 
@@ -16,35 +19,35 @@ int s_index = 0;          // index for scanned_ssids
 int w_index = 0;          // index for saved_networks
 int n = 0;                // number of scanned networks
 
-int arrayToPost[6];
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
+  
+  WiFi.begin(username, password);
+  
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("Connected!");
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
 
   n = WiFi.scanNetworks();
+
+  
   
   saveValues();
 
   String json = " ";
-  
-//  for (int i = 0; i < 6; i++)
-//  {
-////    Serial.print(scanned_ssids[i]);
-////    Serial.print(" : ");
-//    Serial.print(rssi_values[i]);
-//    Serial.print(";");
-//  }
-//  Serial.println("2");
-//  Serial.println(" ");
 
   json = toJSON(rssi_values);
-//  postValues(json);
-  Serial.println(json);
+  postValues(json);
+//  Serial.println(json);
   
   delay(5000);
 }
@@ -64,11 +67,13 @@ String getValue() {
 int postValues(String json) {
   WiFiClient ourClient;
   HTTPClient http; //Declare object of class HTTPClient
-  http.begin(ourClient, "http://"  serverIP  "/saveReadings"); //Specify request destination
+  http.begin(ourClient, "http://192.168.150.126:5000/Predict"); //Specify request destination
   http.addHeader("Content-Type", "application/json"); //Specify content-type header
-  int httpCode = http.POST(json); //Send the request
+  int httpCode = http.POST(json);//Send the request
+  Serial.println(json);
   String payload = http.getString(); //Get the response payload
   Serial.println(payload);
+  Serial.println(httpCode);
   return httpCode;
 }
 
