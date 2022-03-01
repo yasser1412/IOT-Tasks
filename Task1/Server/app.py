@@ -17,8 +17,7 @@ def Predict():
     global predicted
     if request.method == 'POST':
         requested_data = request.get_json()
-        data = []
-        data.append(requested_data["value"])
+        data =([requested_data["value"]])
         print(data)
         predicted = clf.predict(data)
         return str(predicted.tolist()[0]) , 200
@@ -26,5 +25,5 @@ def Predict():
         return str(predicted.tolist()[0]) , 200
     
 
-if __name__ == "main":
-    app.run(host="localhost", debug=True)
+if __name__ == "__main__":
+    app.run(host="192.168.150.126",port=5000, debug=True)
