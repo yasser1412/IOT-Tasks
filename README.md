@@ -1,24 +1,20 @@
-# IOT-Tasks
+# IoT-Tasks
 
-## Task0
----------------
-### Flutter:
-To run flutter with no errors type `flutter run --no-sound-null-safety`
+### Tasks for 4th year Systems and Biomedical Engineering, Cairo University
 
+###### Used technologies: 
+- NodeMCU board v0.9 - esp8266 based
+- Flutter 2.x - to develop cross platform applications (Android, IOS and Web)
+- other technologies have been used and the details are in each task.
+------------------
+## Task: 0
+Create web and mobile applications to read 2 sensors readings (real-time) and draw a graph with the time as the second parameter.
 
+-----------------
+## Task: 1
 
---------------------
---------------------
-### NodeMCU:
-You will need to work on Arduino IDE.
+Create indoor localization system using wireless network devices
 
-To add NodeMCU board to the IDE, follow instructions in this [link](https://circuits4you.com/2018/06/21/add-nodemcu-esp8266-to-arduino-ide/).
+-----------------
 
-Do not forget to select the port after connecting the board, **Tools > Port** 
-
-You need to make sure you have the needed libraries on your machine, which are:
-- DallasTemperature (you can search by **ds18b20**)
-- One Wire
-  
-  to install libraries click on **sketch > Include Library > Manage Libraries**
 

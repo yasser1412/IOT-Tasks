@@ -3,15 +3,10 @@
 #include <ArduinoJson.h>
 #include <WiFiManager.h>
 
-
-#define wifiName "POCO F3"
-#define wifiPassword "Hassan112233@"
 #define serverIP "192.168.150.223:5000"
 
-const int RSSI_MAX = -50; // define maximum strength of signal in dBm
-const int RSSI_MIN = -100; // define minimum strength of signal in dBm
 
-String saved_networks[] = {"STUDBME1", "STUDBME2", "POCO F3", "SBME_STAFF", "CMP_LAB4", "CMP_LAB2"};
+String saved_networks[] = {"STUDBME1", "STUDBME2", "POCO F3", "Ammar's samsung", "CMP_LAB4", "CMP_LAB2"};
 String scanned_ssids[6];
 int rssi_values[6];
 
@@ -21,80 +16,39 @@ int s_index = 0;          // index for scanned_ssids
 int w_index = 0;          // index for saved_networks
 int n = 0;                // number of scanned networks
 
+int arrayToPost[6];
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  WiFi.begin(wifiName, wifiPassword);
-
-  int i = 0;
-  while (WiFi.status() != WL_CONNECTED) { // Wait for the Wi-Fi to connect
-    delay(1000);
-    Serial.print(++i); Serial.print(' ');
-  }
-
-  Serial.println('\n');
-  Serial.println("Connection established!");
-  Serial.print("IP address:\t");
-  Serial.println(WiFi.localIP());
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  //  scanNetwork("STUDBME2", "CMP_LAP2", "CMP_LAP4", "soher", "dodo", "adham");
 
   n = WiFi.scanNetworks();
+  
   saveValues();
-
 
   String json = " ";
   
-  for (int i = 0; i < 6; i++)
-  {
-//    Serial.print(scanned_ssids[i]);
-//    Serial.print(" : ");
-    Serial.print(rssi_values[i]);
-    Serial.print(";");
-    
-//    json = toJSON(scanned_ssids[i], rssi_values[i]);
-//    postValues(json);
-  }
-  Serial.println("0");
-  Serial.println(" ");
+//  for (int i = 0; i < 6; i++)
+//  {
+////    Serial.print(scanned_ssids[i]);
+////    Serial.print(" : ");
+//    Serial.print(rssi_values[i]);
+//    Serial.print(";");
+//  }
+//  Serial.println("2");
+//  Serial.println(" ");
 
+  json = toJSON(rssi_values);
+//  postValues(json);
+  Serial.println(json);
   
-  
-  //  scanNetwork("STUDBME1", "STUDBME2", "POCO F3", "SBME_STAFF", "CMP_LAB4", "CMP_LAB2");
   delay(5000);
 }
 
-
-void scanNetwork(String name1, String name2, String name3, String name4, String name5, String name6) {
-  //  WiFi.disconnect();
-  WiFi.scanNetworks();
-  Serial.print("Scan start ... ");
-  int n = WiFi.scanNetworks();
-  if ( n > 0 )
-  {
-    Serial.print(n);
-    Serial.println(" network(s) found");
-    for (int i = 0; i < n; i++)
-    {
-      //      Serial.print("SSID: ");
-      //      Serial.println(WiFi.SSID(i));
-
-      if (WiFi.SSID(i) == name1 || WiFi.SSID(i) == name2 || WiFi.SSID(i) == name3 || WiFi.SSID(i) == name4 || WiFi.SSID(i) == name5 || WiFi.SSID(i) == name6 ) {
-        Serial.print("SSID: ");
-        Serial.println(WiFi.SSID(i));
-
-        Serial.print("Signal Strength: ");
-        Serial.println(dBmtoPercentage(WiFi.RSSI(i)));
-      }
-
-    }
-    Serial.println();
-  }
-}
 
 String getValue() {
   WiFiClient ourClient;
@@ -118,29 +72,10 @@ int postValues(String json) {
   return httpCode;
 }
 
-String toJSON(String Name, float value) {
-  String strength = String(value);
-  return String("{\"SSID\": ") + "\"" + Name + "\"" + ", \"Strength\": " + strength + "}";
+String toJSON(int arr[]) { 
+  return String("{\"value\": ") + "[" + arr[0] + "," + arr[1] + "," + arr[2] + "," + arr[3] + "," + arr[4] + "," + arr[5] + "]}";
 }
 
-int dBmtoPercentage(int dBm)
-{
-  int quality;
-  if (dBm <= RSSI_MIN)
-  {
-    quality = 0;
-  }
-  else if (dBm >= RSSI_MAX)
-  {
-    quality = 100;
-  }
-  else
-  {
-    quality = 2 * (dBm + 100);
-  }
-
-  return quality;
-}
 
 void saveValues()
 {
