@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from joblib import load
 import json
@@ -12,7 +12,8 @@ CORS(app)
 def Home():
     return "<p> Hello :) !!</p>"
 
-@app.route('/Predict', methods=['GET', 'POST'])
+        
+@app.route('/Predict', methods=['POST'])
 def Predict():
     global predicted
     if request.method == 'POST':
@@ -21,9 +22,11 @@ def Predict():
         print(data)
         predicted = clf.predict(data)
         return str(predicted.tolist()[0]) , 200
-    else:
-        return str(predicted.tolist()[0]) , 200
     
+@app.route('/getPredict', methods=['GET'])
+def getPredict():
+    if request.method == 'GET':
+        return jsonify(value = (predicted.tolist()[0])) , 200
 
 if __name__ == "__main__":
-    app.run(host="192.168.150.126",port=5000, debug=True)
+    app.run(host="192.168.1.13",port=5000, debug=True)
