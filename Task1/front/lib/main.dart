@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:http/http.dart' as http;
 
 Future<int> predict() async {
@@ -10,7 +11,10 @@ Future<int> predict() async {
   return responseData["value"];
 }
 
-late int predicted = 0;
+int pointColor = 0xFFF;
+bool flag = true;
+late Timer timer;
+int predicted = 0;
 List<int> previousData = [];
 void main() => runApp(const MyApp());
 
@@ -31,44 +35,77 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          title: Text("Indoor Localization"),
-          centerTitle: true,
-        ),
-        body: Stack(
-          children: [
-            Center(
-              child: Container(
-                width: 450,
-                height: 950,
-                child: LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
-                    return CustomPaint(
-                      painter: MyPainter(),
-                      size: Size(constraints.maxWidth, constraints.maxHeight),
-                    );
-                  },
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            title: Text("Indoor Localization"),
+            centerTitle: true,
+          ),
+          body: Stack(
+            children: [
+              Center(
+                child: Container(
+                  width: 450,
+                  height: 950,
+                  child: LayoutBuilder(
+                    builder:
+                        (BuildContext context, BoxConstraints constraints) {
+                      return CustomPaint(
+                        painter: MyPainter(),
+                        size: Size(constraints.maxWidth, constraints.maxHeight),
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
-            FloatingActionButton(
-              child: Text("Start"),
-              onPressed: () {
-                Timer.periodic(Duration(seconds: 2), (timer) {
-                  setState(() async {
-                    predicted = await predict();
-                    previousData.add(predicted);
+            ],
+          ),
+          floatingActionButton: SpeedDial(
+            animatedIcon: AnimatedIcons.menu_close,
+            children: [
+              SpeedDialChild(
+                child: Icon(Icons.start),
+                label: 'Start',
+                onTap: () {
+                  flag = false;
+                  timer = Timer.periodic(Duration(seconds: 2), (timer) {
+                    setState(() async {
+                      pointColor = 0xFF0F07FF;
+                      predicted = await predict();
+                      print(predicted);
+                      previousData.add(predicted);
+                    });
                   });
-                });
-              },
-            )
-          ],
-        ),
-      ),
-    );
+                },
+              ),
+              SpeedDialChild(
+                child: Icon(Icons.replay),
+                label: 'Replay',
+                onTap: () async {
+                  flag = true;
+                  timer.cancel();
+                  print(previousData.length);
+                  if (previousData.length >= 50) {
+                    int i = previousData.length - 50;
+                    while (i < previousData.length && flag) {
+                      print("i=====");
+                      await Future.delayed(const Duration(seconds: 2), () {
+                        print(i);
+                        setState(() {
+                          pointColor = 0xFFE6FF07;
+                          predicted = previousData[i];
+                          print("predicted = " + predicted.toString());
+                        });
+                      });
+                      i++;
+                    }
+                  }
+                },
+              )
+            ],
+          ),
+        ));
   }
 }
 
@@ -107,7 +144,7 @@ class MyPainter extends CustomPainter {
     canvas.drawLine(Offset(80, 480), Offset(180, 480), linePaint);
 
     // Circles
-    Paint circlePaint = Paint()..color = Color(0xFF0F07FF);
+    Paint circlePaint = Paint()..color = Color(pointColor);
     switch (predicted) {
       case 0:
         {
