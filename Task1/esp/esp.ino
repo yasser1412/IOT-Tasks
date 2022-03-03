@@ -9,7 +9,7 @@
 String username = "POCO F3";
 String password = "Hassan112233@";
 
-String saved_networks[] = {"STUDBME1", "STUDBME2", "POCO F3", "POCO X3 NFC", "CMP_LAB4", "CMP_LAB2"};
+String saved_networks[] = {"STUDBME1", "STUDBME2", "adel", "POCO X3 NFC", "CMP_LAB4", "CMP_LAB2"};
 String scanned_ssids[6];
 int rssi_values[6];
 

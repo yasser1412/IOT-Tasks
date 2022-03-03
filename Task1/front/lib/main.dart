@@ -5,10 +5,14 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:http/http.dart' as http;
 
 Future<int> predict() async {
-  String url = 'http://192.168.1.13:5000/getPredict';
-  final response = await http.get(Uri.parse(url));
-  final responseData = json.decode(response.body);
+  String url = 'http://192.168.105.126:5000/getPredict';
+  dynamic response = await http.get(Uri.parse(url));
+  dynamic responseData = json.decode(response.body);
   return responseData["value"];
+}
+
+void updateValue() async {
+  predicted = await predict();
 }
 
 int pointColor = 0xFFF;
@@ -46,6 +50,7 @@ class _MyAppState extends State<MyApp> {
             children: [
               Center(
                 child: Container(
+                  color: Color.fromARGB(255, 248, 248, 248),
                   width: 450,
                   height: 950,
                   child: LayoutBuilder(
@@ -69,10 +74,10 @@ class _MyAppState extends State<MyApp> {
                 label: 'Start',
                 onTap: () {
                   flag = false;
-                  timer = Timer.periodic(Duration(seconds: 2), (timer) {
-                    setState(() async {
+                  timer = Timer.periodic(Duration(seconds: 5), (timer) {
+                    setState(() {
+                      updateValue();
                       pointColor = 0xFF0F07FF;
-                      predicted = await predict();
                       print(predicted);
                       previousData.add(predicted);
                     });
