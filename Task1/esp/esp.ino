@@ -67,7 +67,7 @@ String getValue() {
 int postValues(String json) {
   WiFiClient ourClient;
   HTTPClient http; //Declare object of class HTTPClient
-  http.begin(ourClient, "http://192.168.150.126:5000/Predict"); //Specify request destination
+  http.begin(ourClient, "http://192.168.105.126:5000/Predict"); //Specify request destination
   http.addHeader("Content-Type", "application/json"); //Specify content-type header
   int httpCode = http.POST(json);//Send the request
   Serial.println(json);

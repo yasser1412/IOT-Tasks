@@ -7,8 +7,9 @@
 - Flutter 2.x - to develop cross platform applications (Android, IOS and Web)
 - other technologies have been used and the details are in each task.
 ------------------
-## Task: 0
-Create web and mobile applications to read 2 sensors readings (real-time) and draw a graph with the time as the second parameter.
+## Task: 0 (*Server Data Visualizer*)
+Web and mobile applications are real-time visualizing the readings of two sensors connected to esp8266 chip. 
+A **Nodejs** server with **sql** databse is handling the requestes from esp8266 to the web and mobile clients and visualize the data in a **real time graph**.
 
 -----------------
 ## Task: 1
