@@ -29,4 +29,4 @@ def getPredict():
         return jsonify(value = (predicted.tolist()[0])) , 200
 
 if __name__ == "__main__":
-    app.run(host="192.168.1.2",port=5000, debug=True)
+    app.run(host="192.168.105.126",port=5000, debug=True)
