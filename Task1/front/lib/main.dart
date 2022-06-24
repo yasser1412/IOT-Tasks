@@ -5,7 +5,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:http/http.dart' as http;
 
 Future<int> predict() async {
-  String url = 'http://192.168.105.126:5000/getPredict';
+  String url = 'http://192.168.1.13:5000/getPredict';
   dynamic response = await http.get(Uri.parse(url));
   dynamic responseData = json.decode(response.body);
   return responseData["value"];
@@ -15,7 +15,7 @@ void updateValue() async {
   predicted = await predict();
 }
 
-int pointColor = 0xFFF;
+int pointColor = 0x0000FF;
 bool flag = true;
 late Timer timer;
 int predicted = 0;
@@ -150,16 +150,18 @@ class MyPainter extends CustomPainter {
 
     // Circles
     Paint circlePaint = Paint()..color = Color(pointColor);
+    canvas.drawCircle(Offset(90, 370), 5, circlePaint);
+
     switch (predicted) {
       case 0:
         {
-          canvas.drawCircle(Offset(90, 425), 5, circlePaint);
+          canvas.drawCircle(Offset(size.width / 2, 10), 5, circlePaint);
           break;
         }
 
       case 1:
         {
-          canvas.drawCircle(Offset(140, 500), 5, circlePaint);
+          canvas.drawCircle(Offset(size.width - 90, 10), 5, circlePaint);
           break;
         }
 
@@ -169,21 +171,41 @@ class MyPainter extends CustomPainter {
           break;
         }
 
+      case 3:
+        {
+          canvas.drawCircle(Offset(70, 230), 5, circlePaint);
+          break;
+        }
+
       case 4:
         {
-          canvas.drawCircle(Offset(size.width / 2, 310), 5, circlePaint);
+          canvas.drawCircle(Offset(size.width - 70, 230), 5, circlePaint);
           break;
         }
 
       case 5:
         {
-          canvas.drawCircle(Offset(size.width / 2, 70), 5, circlePaint);
+          canvas.drawCircle(Offset(size.width / 2, 310), 5, circlePaint);
           break;
         }
-
       case 6:
         {
-          canvas.drawCircle(Offset(size.width / 2, 530), 5, circlePaint);
+          canvas.drawCircle(Offset(90, 370), 5, circlePaint);
+          break;
+        }
+      case 7:
+        {
+          canvas.drawCircle(Offset(90, 425), 5, circlePaint);
+          break;
+        }
+      case 8:
+        {
+          canvas.drawCircle(Offset(90, 425), 5, circlePaint);
+          break;
+        }
+      case 9:
+        {
+          canvas.drawCircle(Offset(size.width / 2, 600), 5, circlePaint);
           break;
         }
 
